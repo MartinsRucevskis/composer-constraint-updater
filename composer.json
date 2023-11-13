@@ -1,0 +1,26 @@
+{
+  "name": "composerconstraintupdater/constraint-updater",
+  "type": "composer-plugin",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Cristian Radulescu"
+    }
+  ],
+  "require": {
+    "php": "^8.1",
+    "composer-plugin-api": "^2.3"
+  },
+  "require-dev": {
+    "composer/composer": "^2.0",
+    "phpunit/phpunit": "10.4.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "MartinsR\\ComposerConstraintUpdater\\": "src/"
+    }
+  },
+  "extra": {
+    "class": "MartinsR\\ComposerConstraintUpdater\\ComposerPlugin"
+  }
+}
