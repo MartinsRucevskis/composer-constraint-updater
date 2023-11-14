@@ -12,6 +12,6 @@ class CommandProvider implements CommandProviderCapability
      */
     public function getCommands()
     {
-        return [new ConstraintUpdaterInitCommand()];
+        return [new MajorConstraintUpdater()];
     }
 }

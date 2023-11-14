@@ -1,10 +1,10 @@
 {
-  "name": "composerconstraintupdater/constraint-updater",
+  "name": "martinsr/constraint-updater",
   "type": "composer-plugin",
   "license": "MIT",
   "authors": [
     {
-      "name": "Cristian Radulescu"
+      "name": "Martins Rucevskis"
     }
   ],
   "require": {
