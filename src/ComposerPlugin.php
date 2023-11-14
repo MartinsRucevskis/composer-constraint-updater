@@ -16,7 +16,7 @@ class ComposerPlugin implements PluginInterface, Capable
     public function activate(Composer $composer, IOInterface $io)
     {
     }
-    
+
 
     /**
      * {@inheritdoc}
@@ -24,7 +24,7 @@ class ComposerPlugin implements PluginInterface, Capable
     public function getCapabilities(): array
     {
         return [
-            'Composer\Plugin\Capability\CommandProvider' => '',
+            'Composer\Plugin\Capability\CommandProvider' => 'MartinsR\ComposerConstraintUpdater\CommandProvider',
         ];
     }
 
