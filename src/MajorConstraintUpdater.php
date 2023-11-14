@@ -47,19 +47,19 @@ class MajorConstraintUpdater extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $composerPath = $input->getOption('composer-path');
-        $composerFileContents = file_get_contents($composerPath);
-        $constraints = [];
-        
-        foreach ($input->getOption('constraint') as $option) {
-            $input = explode(':', $option);
-            $constraints[$input[0]] = $input[1];
-        }
-        file_put_contents($composerPath, $this->replaceVersions($composerFileContents, $constraints));
-
-        $this->updateComposer();
+//        $composerFileContents = file_get_contents($composerPath);
+//        $constraints = [];
+//
+//        foreach ($input->getOption('constraint') as $option) {
+//            $input = explode(':', $option);
+//            $constraints[$input[0]] = $input[1];
+//        }
+//        file_put_contents($composerPath, $this->replaceVersions($composerFileContents, $constraints));
+//
+//        $this->updateComposer();
 
         file_put_contents($composerPath, $this->versionsFromLock($composerPath));
-        
+
         return 1;
     }
 
@@ -81,12 +81,11 @@ class MajorConstraintUpdater extends BaseCommand
         foreach ($types as $typeJson => $typeLock) {
             preg_match('/"' . preg_quote($typeJson) . '":\s+{([\s\S]+?)}/', $composerJsonContents, $dependencies);
             $dependencies = $this->processDependencies(preg_split('/,/ms', $dependencies[1]));
-            print_r($dependencies);
             foreach ($dependencies as $dependencyName => $version) {
-                preg_match('#"name": "' . preg_quote($dependencyName) . '",\s+"version": "(.+)"#m', $composerLockContents, $match);
+                preg_match('#"name": ' . preg_quote($dependencyName) . ',\s+"version": "(.+)"#m', $composerLockContents, $match);
                 if (isset($match[1])) {
-                    print_r($match[1]);
-                    $composerJsonContents = str_replace('"' . $dependencyName . '": "' . $version . '"', '"' . $dependencyName . '": "^' . $match[1] . '"', $composerJsonContents);
+                    echo  $dependencyName . ': ' . $version;
+                    $composerJsonContents = str_replace($dependencyName . ': ' . $version, $dependencyName . ': "^' . $match[1] . '"', $composerJsonContents);
                 }
             }
         }
