@@ -3,6 +3,7 @@
 namespace MartinsR\ComposerConstraintUpdater;
 
 use Composer\Command\BaseCommand;
+use Composer\Factory;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,7 +13,6 @@ class MajorConstraintUpdater extends BaseCommand
 
     protected function configure()
     {
-        // @codingStandardsIgnoreStart
         $this
             ->setName('major-update')
             ->setDescription(
@@ -22,10 +22,16 @@ class MajorConstraintUpdater extends BaseCommand
             )
             ->setDefinition([
                 new InputOption(
-                    'composer-path',
-                    'C',
-                    InputOption::VALUE_REQUIRED,
+                    'composer-json',
+                    null,
+                    InputOption::VALUE_OPTIONAL,
                     'Composer json file location'
+                ),
+                new InputOption(
+                    'composer-lock',
+                    null,
+                    InputOption::VALUE_OPTIONAL,
+                    'Composer lock file location'
                 ),
                 new InputOption(
                     'constraint',
@@ -40,25 +46,33 @@ class MajorConstraintUpdater extends BaseCommand
             you can use major-update -C=composer-path --constraint=package/package:^9.0.0. This command will automatically resolve the conflicts in composer.json, saving you the trouble of doing it manually
             EOT
             );
-        // @codingStandardsIgnoreEnd
     }
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $composerPath = $input->getOption('composer-path');
-        $composerFileContents = file_get_contents($composerPath);
+        $composerPath = $input->getOption('composer-json') ?? Factory::getComposerFile();
+        $composerLock = $input->getOption('composer-lock') ?? Factory::getLockFile($composerPath);
+
+        $composerFileContents = file_get_contents($composerPath) ?: throw new \Exception('Couldn\'t open the composer json from ' . $composerPath);
+
         $constraints = [];
-        
+
         foreach ($input->getOption('constraint') as $option) {
             $input = explode(':', $option);
             $constraints[$input[0]] = $input[1];
         }
+
+        $output->writeln('Building composer.json for update');
         file_put_contents($composerPath, $this->replaceVersions($composerFileContents, $constraints));
 
+        $output->writeln('Launching composer update');
         $this->updateComposer();
 
-        file_put_contents($composerPath, $this->versionsFromLock($composerPath));
+        $output->writeln('Rebuilding composer.json from lock');
+        file_put_contents($composerPath, (new ComposerJsonFromLockBuilder($composerPath, $composerLock))->versionsFromLock());
+        
+        $output->writeln('Composer.json has been successfully updated!');
         
         return 1;
     }
@@ -68,31 +82,6 @@ class MajorConstraintUpdater extends BaseCommand
         $update = shell_exec('composer update');
 
         echo $update;
-    }
-
-    public function versionsFromLock(string $composerPath)
-    {
-        $composerLockPath = str_replace('composer.json', 'composer.lock', $composerPath);
-
-        $composerLockContents = file_get_contents($composerLockPath);
-        $composerJsonContents = file_get_contents($composerPath);
-
-        $types = ['require' => 'packages', 'require-dev' => 'packages-dev'];
-        foreach ($types as $typeJson => $typeLock) {
-            preg_match('/"' . preg_quote($typeJson) . '":\s+{([\s\S]+?)}/', $composerJsonContents, $dependencies);
-            $dependencies = $this->processDependencies(preg_split('/,/ms', $dependencies[1]));
-            print_r($dependencies);
-            foreach ($dependencies as $dependencyName => $version) {
-                preg_match('#"name": "' . preg_quote($dependencyName) . '",\s+"version": "(.+)"#m', $composerLockContents, $match);
-                if (isset($match[1])) {
-                    print_r($match[1]);
-                    $composerJsonContents = str_replace('"' . $dependencyName . '": "' . $version . '"', '"' . $dependencyName . '": "^' . $match[1] . '"', $composerJsonContents);
-                }
-            }
-        }
-
-        return $composerJsonContents;
-
     }
 
     public
@@ -113,18 +102,5 @@ class MajorConstraintUpdater extends BaseCommand
         }
 
         return $composerContents;
-    }
-
-    private
-    function processDependencies(array $dependencies): array
-    {
-        $composerDependencies = [];
-        foreach ($dependencies as &$dependency) {
-            $dependency = preg_replace('/\s+/ms', '', $dependency);
-            $dependency = explode(':', $dependency);
-            $composerDependencies[$dependency[0]] = $dependency[1];
-        }
-
-        return $composerDependencies;
     }
 }
