@@ -21,13 +21,15 @@ class MinorConstraintUpdater extends BaseCommand
                     'composer-json',
                     null,
                     InputOption::VALUE_OPTIONAL,
-                    'Composer json file location'
+                    'Composer json file location',
+                    Factory::getComposerFile()
                 ),
                 new InputOption(
                     'composer-lock',
                     null,
                     InputOption::VALUE_OPTIONAL,
-                    'Composer lock file location'
+                    'Composer lock file location',
+                    Factory::getLockFile(Factory::getComposerFile())
                 ),
             ])
             ->setHelp(<<<EOT
@@ -41,8 +43,8 @@ class MinorConstraintUpdater extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $composerPath = $input->getOption('composer-json') ?? Factory::getComposerFile();
-        $composerLock = $input->getOption('composer-lock') ?? Factory::getLockFile($composerPath);
+        $composerPath = $input->getOption('composer-json');
+        $composerLock = $input->getOption('composer-lock');
 
         $output->writeln('Launching composer update');
         $this->updateComposer();
