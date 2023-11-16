@@ -25,13 +25,15 @@ class MajorConstraintUpdater extends BaseCommand
                     'composer-json',
                     null,
                     InputOption::VALUE_OPTIONAL,
-                    'Composer json file location'
+                    'Composer json file location',
+                    Factory::getComposerFile()
                 ),
                 new InputOption(
                     'composer-lock',
                     null,
                     InputOption::VALUE_OPTIONAL,
-                    'Composer lock file location'
+                    'Composer lock file location',
+                    Factory::getLockFile(Factory::getComposerFile())
                 ),
                 new InputOption(
                     'constraint',
@@ -51,8 +53,8 @@ class MajorConstraintUpdater extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $composerPath = $input->getOption('composer-json') ?? Factory::getComposerFile();
-        $composerLock = $input->getOption('composer-lock') ?? Factory::getLockFile($composerPath);
+        $composerPath = $input->getOption('composer-json');
+        $composerLock = $input->getOption('composer-lock');
 
         $composerFileContents = file_get_contents($composerPath) ?: throw new \Exception('Couldn\'t open the composer json from ' . $composerPath);
 
@@ -94,7 +96,7 @@ class MajorConstraintUpdater extends BaseCommand
             foreach ($packageConstraints as $constraint => $version) {
                 $packages = preg_replace(
                     '@"' . preg_quote($constraint) . '"\s*:\s*"\*"@m',
-                    '"' . preg_quote($constraint) . '": "' . $version . '"',
+                    '"' . $constraint . '": "' . $version . '"',
                     $packages
                 );
             }
