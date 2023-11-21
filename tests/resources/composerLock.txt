@@ -460,7 +460,7 @@
     },
     {
       "name": "composer/metadata-minifier",
-      "version": "1.0.0",
+      "version": "3.0",
       "source": {
         "type": "git",
         "url": "https://github.com/composer/metadata-minifier.git",
@@ -4116,7 +4116,7 @@
     },
     {
       "name": "nikic/php-parser",
-      "version": "v4.17.1",
+      "version": "dev-master",
       "source": {
         "type": "git",
         "url": "https://github.com/nikic/PHP-Parser.git",

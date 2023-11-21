@@ -9,7 +9,6 @@ use Composer\Plugin\PluginInterface;
 
 class ComposerPlugin implements PluginInterface, Capable
 {
-
     /**
      * {@inheritdoc}
      */

@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class MinorConstraintUpdater extends BaseCommand
 {
-
+    use FileOpener;
     protected function configure()
     {
         $this
@@ -32,7 +32,8 @@ class MinorConstraintUpdater extends BaseCommand
                     Factory::getLockFile(Factory::getComposerFile())
                 ),
             ])
-            ->setHelp(<<<EOT
+            ->setHelp(
+                <<<EOT
             The <info>minor-update</info> command executes a composer update, which updates your composer.json
             file to reflect the actual versions of all packages.
             This means it will update the versions of your packages to the latest minor versions, while respecting the version constraints defined in your composer.json file.
@@ -47,10 +48,11 @@ class MinorConstraintUpdater extends BaseCommand
         $composerLock = $input->getOption('composer-lock');
 
         $output->writeln('Launching composer update');
+        $composerJson = new ComposerJson($composerPath, $composerLock);
         $this->updateComposer();
 
         $output->writeln('Rebuilding composer.json from lock file');
-        file_put_contents($composerPath, (new ComposerJsonFromLockBuilder($composerPath, $composerLock))->versionsFromLock());
+        file_put_contents($composerPath, $composerJson->rebuildFromLock());
 
         $output->writeln('Composer.json has been successfully updated!');
         return 1;
