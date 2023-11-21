@@ -9,13 +9,10 @@ use Composer\Plugin\PluginInterface;
 
 class ComposerPlugin implements PluginInterface, Capable
 {
-
     /**
      * {@inheritdoc}
      */
-    public function activate(Composer $composer, IOInterface $io)
-    {
-    }
+    public function activate(Composer $composer, IOInterface $io) {}
 
 
     /**
@@ -28,11 +25,7 @@ class ComposerPlugin implements PluginInterface, Capable
         ];
     }
 
-    public function deactivate(Composer $composer, IOInterface $io)
-    {
-    }
+    public function deactivate(Composer $composer, IOInterface $io) {}
 
-    public function uninstall(Composer $composer, IOInterface $io)
-    {
-    }
+    public function uninstall(Composer $composer, IOInterface $io) {}
 }

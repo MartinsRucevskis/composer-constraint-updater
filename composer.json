@@ -13,7 +13,9 @@
   },
   "require-dev": {
     "composer/composer": "^2.0",
-    "phpunit/phpunit": "10.4.2"
+    "phpunit/phpunit": "10.4.2",
+    "phpstan/phpstan": "^1.10",
+    "friendsofphp/php-cs-fixer": "^3.38"
   },
   "autoload": {
     "psr-4": {
