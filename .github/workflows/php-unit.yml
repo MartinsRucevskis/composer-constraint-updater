@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  Feature-and-Unit-Tests:
+  PHP-Unit:
 
     runs-on: ubuntu-latest
 
