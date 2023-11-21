@@ -65,7 +65,7 @@ class MajorConstraintUpdater extends BaseCommand
 
         foreach ($input->getOption('constraint') as $option) {
             $input = explode(':', $option);
-            if(!isset($option[1], $option[2])) {
+            if(!isset($input[0], $input[1])) {
                 throw new Exception('Wrong input constraint, should be as package:version');
             }
             $constraints[$input[0]] = $input[1];
