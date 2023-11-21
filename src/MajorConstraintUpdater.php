@@ -46,10 +46,10 @@ class MajorConstraintUpdater extends BaseCommand
             ])
             ->setHelp(
                 <<<EOT
-            The <info>major-update</info> command updates your composer.json file such that other packages are updated
-            to the newest versions without a need to resolve conflicts manually.  For example, if you’re upgrading package/package from version 9 to 10 and there are conflicts with other packages,
-            you can use major-update -C=composer-path --constraint=package/package:^9.0.0. This command will automatically resolve the conflicts in composer.json, saving you the trouble of doing it manually
-            EOT
+                    The <info>major-update</info> command updates your composer.json file such that other packages are updated
+                    to the newest versions without a need to resolve conflicts manually.  For example, if you’re upgrading package/package from version 9 to 10 and there are conflicts with other packages,
+                    you can use major-update -C=composer-path --constraint=package/package:^9.0.0. This command will automatically resolve the conflicts in composer.json, saving you the trouble of doing it manually
+                    EOT
             );
     }
 

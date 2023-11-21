@@ -8,8 +8,7 @@ class ComposerJsonFromLockBuilder
     public function __construct(
         private readonly string $composerJsonPath,
         private readonly string $composerLockPath
-    ) {
-    }
+    ) {}
 
     /**
      * @param array<string, array<string, string>> $originalVersionPrefixes
@@ -25,13 +24,13 @@ class ComposerJsonFromLockBuilder
 
         foreach ($types as $type) {
             foreach ($this->dependencies($composerJsonContents, $type) as $dependency => $version) {
-                preg_match('#"name": ' . preg_quote($dependency) . ',\s+"version": "(.+)"#m', $composerLockContents, $match);
+                preg_match('#"name": "' . preg_quote($dependency) . '",\s+"version": "(.+)"#m', $composerLockContents, $match);
 
                 if (isset($match[1])) {
                     $lockVersion = $originalVersionPrefixes[$type][$dependency] . $match[1];
                     $composerJsonContents = str_replace(
-                        $dependency . ': ' . $version,
-                        $dependency . ': "' . $lockVersion . '"',
+                        '"' . $dependency . '": ' . $version,
+                        '"' . $dependency . '": "' . $lockVersion . '"',
                         $composerJsonContents
                     );
                 }

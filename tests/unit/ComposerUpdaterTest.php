@@ -34,6 +34,6 @@ class ComposerUpdaterTest extends TestCase
 
     private function resourcePath(string $resourceName): string
     {
-        return dirname(__DIR__).'/resources/'.$resourceName;
+        return dirname(__DIR__) . '/resources/' . $resourceName;
     }
 }

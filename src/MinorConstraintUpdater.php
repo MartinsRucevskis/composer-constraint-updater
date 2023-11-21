@@ -34,10 +34,10 @@ class MinorConstraintUpdater extends BaseCommand
             ])
             ->setHelp(
                 <<<EOT
-            The <info>minor-update</info> command executes a composer update, which updates your composer.json
-            file to reflect the actual versions of all packages.
-            This means it will update the versions of your packages to the latest minor versions, while respecting the version constraints defined in your composer.json file.
-            EOT
+                    The <info>minor-update</info> command executes a composer update, which updates your composer.json
+                    file to reflect the actual versions of all packages.
+                    This means it will update the versions of your packages to the latest minor versions, while respecting the version constraints defined in your composer.json file.
+                    EOT
             );
     }
 
