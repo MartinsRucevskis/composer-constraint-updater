@@ -1,0 +1,4 @@
+vendor
+phpstan.neon
+phpunit.xml
+phpCsFixerConfig.php
