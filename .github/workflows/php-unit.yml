@@ -6,11 +6,12 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: write    
+
 jobs:
   PHP-Unit:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
       with:
@@ -19,4 +20,11 @@ jobs:
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
     - name: Execute tests
-      run: ./vendor/bin/phpunit --testdox --coverage-text
+      run: ./vendor/bin/phpunit --stop-on-failure --coverage-php=coverage.php
+      env:
+        XDEBUG_MODE: coverage
+    - name: Generate Coverage report
+      run: |
+        php CoverageGenerate.php >> Coverage.md
+      env:
+        XDEBUG_MODE: coverage    
