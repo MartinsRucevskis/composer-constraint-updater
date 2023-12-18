@@ -27,8 +27,8 @@ jobs:
         configuration: phpunit.xml.dist
         php_extensions: gettext xdebug
         args: --coverage-clover ./coverage.xml --testdox
-    - name: Upload to Codecov
-      uses: codecov/codecov-action@v2
+    - name: Code Coverage Summary
+      uses: irongut/CodeCoverageSummary@v1.3.0
       with:
-        files: ./coverage.xml
-        verbose: true      
+        filename: coverage.xml
+
