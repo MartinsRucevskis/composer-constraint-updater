@@ -19,12 +19,16 @@ jobs:
     - uses: actions/checkout@v3
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-    - name: Execute tests
-      run: ./vendor/bin/phpunit --stop-on-failure --coverage-php=coverage.php
+    - name: PHPUnit Tests
+      uses: php-actions/phpunit@v3
       env:
         XDEBUG_MODE: coverage
-    - name: Generate Coverage report
-      run: |
-        php CoverageGenerate.php >> Coverage.md
-      env:
-        XDEBUG_MODE: coverage    
+      with:
+        configuration: phpunit.xml.dist
+        php_extensions: gettext xdebug
+        args: --coverage-clover ./coverage.xml --test-dox
+    - name: Upload to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        files: ./coverage.xml
+        verbose: true      
