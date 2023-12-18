@@ -5,4 +5,5 @@
       <directory>./tests/unit</directory>
     </testsuite>
   </testsuites>
+  <coveage />
 </phpunit>
