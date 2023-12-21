@@ -8,40 +8,37 @@ use Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use function Safe\file_put_contents;
 
 class MajorConstraintUpdater extends BaseCommand
 {
-    use FileOpener;
 
     protected function configure()
     {
         $this
             ->setName('major-update')
             ->setDescription(
-                'Updater your composer json file to newest,
-                          but given constraint supported packages(e.g given constaint laravel/laravel 9,
-                          updated all the other packages such that there arent conflicts'
+                'Update your composer.json file to newest possible packages,
+                          given constraints(e.g given constraint laravel/laravel 9,
+                          updated all the other packages such that there aren\'t conflicts'
             )
             ->setDefinition([
                 new InputOption(
-                    'composer-json',
-                    null,
-                    InputOption::VALUE_OPTIONAL,
-                    'Composer json file location',
-                    Factory::getComposerFile()
+                    name: 'composer-json',
+                    mode: InputOption::VALUE_OPTIONAL,
+                    description: 'Composer json file location',
+                    default: Factory::getComposerFile()
                 ),
                 new InputOption(
-                    'composer-lock',
-                    null,
-                    InputOption::VALUE_OPTIONAL,
-                    'Composer lock file location',
-                    Factory::getLockFile(Factory::getComposerFile())
+                    name: 'composer-lock',
+                    mode: InputOption::VALUE_OPTIONAL,
+                    description: 'Composer lock file location',
+                    default: Factory::getLockFile(Factory::getComposerFile())
                 ),
                 new InputOption(
-                    'constraint',
-                    null,
-                    InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
-                    'Package/packages to require with a version constraint, e.g. foo/bar:1.0.0 or foo/bar=1.0.0'
+                    name: 'constraint',
+                    mode: InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
+                    description: 'Package/packages to require with a version constraint, e.g. foo/bar:1.0.0 or foo/bar=1.0.0'
                 ),
             ])
             ->setHelp(
@@ -58,37 +55,28 @@ class MajorConstraintUpdater extends BaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $composerPath = $input->getOption('composer-json');
-        $composerLock = $input->getOption('composer-lock');
+        try {
+            $composerPath = $input->getOption('composer-json');
+            $composerLock = $input->getOption('composer-lock');
 
-        $constraints = [];
+            $constraints = $this->inputConstraints($input);
+            $composerJson = new ComposerJson($composerPath, $composerLock);
+            $output->writeln('Building composer.json for update');
+            file_put_contents($composerPath, $composerJson->replaceVersions($constraints));
 
-        foreach ($input->getOption('constraint') as $option) {
-            $input = explode(':', $option);
-            if(!isset($input[0], $input[1])) {
-                throw new Exception('Wrong input constraint, should be as package:version');
-            }
-            $constraints[$input[0]] = $input[1];
+            $output->writeln('Launching composer update');
+            $this->updateComposer();
+
+            $output->writeln('Rebuilding composer.json from lock');
+            $composerJson->rebuildFromLock();
+
+            $output->writeln('Composer.json has been successfully updated!');
+        } catch (Exception $exception){
+            echo $exception;
+            return 1;
         }
-        $composerJson = new ComposerJson($composerPath, $composerLock);
-        $output->writeln('Building composer.json for update');
-        file_put_contents(
-            $composerPath,
-            $composerJson->replaceVersions($constraints)
-        );
 
-        $output->writeln('Launching composer update');
-        $this->updateComposer();
-
-        $output->writeln('Rebuilding composer.json from lock');
-        file_put_contents(
-            $composerPath,
-            $composerJson->rebuildFromLock()
-        );
-
-        $output->writeln('Composer.json has been successfully updated!');
-
-        return 1;
+        return 0;
     }
 
     private function updateComposer(): void
@@ -96,5 +84,21 @@ class MajorConstraintUpdater extends BaseCommand
         $update = shell_exec('composer update');
 
         echo $update;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function inputConstraints(InputInterface $input): array{
+        $constraints = [];
+        foreach ($input->getOption('constraint') as $option) {
+            $input = explode(':', $option);
+            if(!isset($input[0], $input[1])) {
+                throw new Exception('Wrong input constraint, should be as package:version');
+            }
+            $constraints[$input[0]] = $input[1];
+        }
+        
+        return $constraints;
     }
 }

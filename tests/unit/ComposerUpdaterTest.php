@@ -1,14 +1,12 @@
 <?php
 
 use MartinsR\ComposerConstraintUpdater\ComposerJson;
-use MartinsR\ComposerConstraintUpdater\ComposerJsonFromLockBuilder;
-use MartinsR\ComposerConstraintUpdater\FileOpener;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use function Safe\file_get_contents;
 
 class ComposerUpdaterTest extends TestCase
 {
-    use FileOpener;
 
     #[Test]
     public function buildComposerJsonForUpdate(): void
@@ -16,7 +14,7 @@ class ComposerUpdaterTest extends TestCase
         $composerJsonForMajorUpdate = (new ComposerJson($this->resourcePath('composerJson.txt'), $this->resourcePath('composerLock.txt'))
         )->replaceVersions(['laravel/framework' => '^9.0', 'php' => '^8.1']);
         $this->assertEquals(
-            $this->fileContents($this->resourcePath('composerJsonForMajorUpdate.txt')),
+            file_get_contents($this->resourcePath('composerJsonForMajorUpdate.txt')),
             $composerJsonForMajorUpdate
         );
     }
@@ -24,11 +22,11 @@ class ComposerUpdaterTest extends TestCase
     #[Test]
     public function rebuildComposerJsonFileFromLock(): void
     {
-        $composerJsonFromLock = (new ComposerJson($this->resourcePath('composerJson.txt'), $this->resourcePath('composerLock.txt'))
+        (new ComposerJson($this->resourcePath('composerJson.txt'), $this->resourcePath('composerLock.txt'))
         )->rebuildFromLock();
         $this->assertEquals(
-            $this->fileContents($this->resourcePath('composerJsonFromLock.txt')),
-            $composerJsonFromLock
+            file_get_contents($this->resourcePath('composerJsonFromLock.txt')),
+            file_get_contents('composerJson.txt')
         );
     }
 

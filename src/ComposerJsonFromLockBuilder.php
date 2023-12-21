@@ -4,7 +4,6 @@ namespace MartinsR\ComposerConstraintUpdater;
 
 class ComposerJsonFromLockBuilder
 {
-    use FileOpener;
     public function __construct(
         private readonly string $composerJsonPath,
         private readonly string $composerLockPath
@@ -17,8 +16,8 @@ class ComposerJsonFromLockBuilder
      */
     public function versionsFromLock(array $originalVersionPrefixes): string
     {
-        $composerLockContents = $this->fileContents($this->composerLockPath);
-        $composerJsonContents = $this->fileContents($this->composerJsonPath);
+        $composerLockContents = file_get_contents($this->composerLockPath);
+        $composerJsonContents = file_get_contents($this->composerJsonPath);
 
         $types = ['require', 'require-dev'];
 

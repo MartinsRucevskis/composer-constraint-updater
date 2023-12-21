@@ -3,6 +3,7 @@
 namespace MartinsR\ComposerConstraintUpdater;
 
 use Composer\Composer;
+use Composer\Plugin\Capability\CommandProvider as ComposerCommandProvider;
 use Composer\IO\IOInterface;
 use Composer\Plugin\Capable;
 use Composer\Plugin\PluginInterface;
@@ -21,7 +22,7 @@ class ComposerPlugin implements PluginInterface, Capable
     public function getCapabilities(): array
     {
         return [
-            'Composer\Plugin\Capability\CommandProvider' => 'MartinsR\ComposerConstraintUpdater\CommandProvider',
+            ComposerCommandProvider::class => CommandProvider::class,
         ];
     }
 

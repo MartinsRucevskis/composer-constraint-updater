@@ -10,7 +10,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class MinorConstraintUpdater extends BaseCommand
 {
-    use FileOpener;
     protected function configure()
     {
         $this
@@ -52,10 +51,10 @@ class MinorConstraintUpdater extends BaseCommand
         $this->updateComposer();
 
         $output->writeln('Rebuilding composer.json from lock file');
-        file_put_contents($composerPath, $composerJson->rebuildFromLock());
+        $composerJson->rebuildFromLock();
 
         $output->writeln('Composer.json has been successfully updated!');
-        return 1;
+        return 0;
     }
 
     private function updateComposer(): void

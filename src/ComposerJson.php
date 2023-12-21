@@ -2,9 +2,11 @@
 
 namespace MartinsR\ComposerConstraintUpdater;
 
+use function Safe\file_put_contents;
+use function Safe\file_get_contents;
+
 class ComposerJson
 {
-    use FileOpener;
     private string $composerContents;
     /**
      * @var array<string, array<string, string>>
@@ -16,7 +18,7 @@ class ComposerJson
      */
     public function __construct(private readonly string $composerPath, private readonly string $composerLockPath)
     {
-        $this->composerContents = $this->fileContents($this->composerPath);
+        $this->composerContents = file_get_contents($this->composerPath);
         $this->versionPrefixes = $this->versionPrefixes();
     }
 
@@ -26,12 +28,12 @@ class ComposerJson
     private function versionPrefixes(): array
     {
         $constraints = [];
+        $packages = json_decode($this->composerContents);
         foreach (['require', 'require-dev'] as $requirement) {
-            preg_match('/"' . preg_quote($requirement) . '"\s*:\s*\{([\s|\S]+?)\}/m', $this->composerContents, $matches);
-            if (isset($matches[1])) {
-                preg_match_all('/\"(.+?)\"\s*:\s*"([<>~^=]*).*"/m', $matches[1], $matches);
-                for ($i = 0; $i < count($matches[1]); $i++) {
-                    $constraints[$requirement][$matches[1][$i]] = $matches[2][$i] ?? '^';
+            foreach ($packages->{$requirement} as $package => $version) {
+                if (str_contains('\\', $package)) {
+                    preg_match('#([\^|~|>|=|<]*)#s', $version, $versionPrefix);
+                    $constraints[$package] = $versionPrefix[1];
                 }
             }
         }
@@ -45,24 +47,20 @@ class ComposerJson
     public function replaceVersions(array $packageConstraints): string
     {
         $requirements = ['require', 'require-dev'];
+        $packages = json_decode($this->composerContents, true);
         foreach ($requirements as $requirement) {
-            preg_match('/"' . preg_quote($requirement) . '"\s*:\s*\{([\s|\S]+?)\}/m', $this->composerContents, $matches);
-            $packages = preg_replace('/:\s*"(?!.*dev)(.*)+?"/m', ': "*"', $matches[1]);
-            foreach ($packageConstraints as $constraint => $version) {
-                $packages = preg_replace(
-                    '@"' . preg_quote($constraint) . '"\s*:\s*"\*"@m',
-                    '"' . $constraint . '": "' . $version . '"',
-                    $packages
-                );
+            foreach ($packages[$requirement] as $package => $version) {
+                $packages[$requirement][$package] = $packageConstraints[$package] ?: '*';
             }
-            $this->composerContents = preg_replace('/"' . preg_quote($requirement) . '"\s*:\s*\{([\s|\S]+?)\}/m', '"' . $requirement . '": {' . $packages . '}', $this->composerContents);
         }
-
-        return $this->composerContents;
+        return json_encode($packages, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
-    public function rebuildFromLock(): string
+    public function rebuildFromLock(): void
     {
-        return (new ComposerJsonFromLockBuilder($this->composerPath, $this->composerLockPath))->versionsFromLock($this->versionPrefixes);
+        file_put_contents(
+            $this->composerPath,
+            (new ComposerJsonFromLockBuilder($this->composerPath, $this->composerLockPath))->versionsFromLock($this->versionPrefixes)
+        );
     }
 }
