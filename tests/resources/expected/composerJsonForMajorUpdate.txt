@@ -9,10 +9,11 @@
         "composer/metadata-minifier": "*",
         "guzzlehttp/guzzle": "*",
         "laravel/framework": "^9.0",
-        "nikic/php-parser": "dev-master"
+        "laravel/tinker": "*",
+        "martinsr/constraint-updater": "^1.2.1"
     },
     "require-dev": {
-        "mockery/mockery": "*",
+        "mockery/mockery": "*"
     },
     "autoload": {
         "psr-4": {

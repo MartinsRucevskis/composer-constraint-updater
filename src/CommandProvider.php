@@ -6,9 +6,6 @@ use Composer\Plugin\Capability\CommandProvider as CommandProviderCapability;
 
 class CommandProvider implements CommandProviderCapability
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getCommands(): array
     {
         return [

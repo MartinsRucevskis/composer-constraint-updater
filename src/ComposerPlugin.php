@@ -4,28 +4,28 @@ namespace MartinsR\ComposerConstraintUpdater;
 
 use Composer\Composer;
 use Composer\IO\IOInterface;
+use Composer\Plugin\Capability\CommandProvider as ComposerCommandProvider;
 use Composer\Plugin\Capable;
 use Composer\Plugin\PluginInterface;
 
 class ComposerPlugin implements PluginInterface, Capable
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function activate(Composer $composer, IOInterface $io) {}
+    public function activate(Composer $composer, IOInterface $io): void
+    {
+    }
 
-
-    /**
-     * {@inheritdoc}
-     */
     public function getCapabilities(): array
     {
         return [
-            'Composer\Plugin\Capability\CommandProvider' => 'MartinsR\ComposerConstraintUpdater\CommandProvider',
+            ComposerCommandProvider::class => CommandProvider::class,
         ];
     }
 
-    public function deactivate(Composer $composer, IOInterface $io) {}
+    public function deactivate(Composer $composer, IOInterface $io): void
+    {
+    }
 
-    public function uninstall(Composer $composer, IOInterface $io) {}
+    public function uninstall(Composer $composer, IOInterface $io): void
+    {
+    }
 }
