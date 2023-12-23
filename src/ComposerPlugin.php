@@ -5,7 +5,6 @@ namespace MartinsR\ComposerConstraintUpdater;
 use Composer\Composer;
 use Composer\Plugin\Capability\CommandProvider as ComposerCommandProvider;
 use Composer\IO\IOInterface;
-use Composer\Plugin\Capability\CommandProvider as ComposerCommandProvider;
 use Composer\Plugin\Capable;
 use Composer\Plugin\PluginInterface;
 

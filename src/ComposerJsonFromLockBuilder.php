@@ -45,13 +45,13 @@ class ComposerJsonFromLockBuilder
     }
 
     /**
-     * @param array<string, array<mixed>> $composerJsonContents
+     * @param array<string, array<mixed>> $composerJson
      *
      * @return array<int, string>
      */
-    private function dependencyNames(array $composerJsonContents, string $dependencyType): array
+    private function dependencyNames(array $composerJson, string $dependencyType): array
     {
-        $packages = array_filter(array_keys($composerJsonContents['require' . $dependencyType]), function ($package) {
+        $packages = array_filter(array_keys($composerJson['require' . $dependencyType]), function ($package) {
             return str_contains($package, '/');
         });
         return array_values($packages);

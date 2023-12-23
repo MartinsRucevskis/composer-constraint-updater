@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 
 class Input
 {
-    public function __construct(private InputInterface $input)
+    public function __construct(private readonly InputInterface $input)
     {
     }
 
