@@ -1,29 +1,15 @@
 <?php
 
-use MartinsR\ComposerConstraintUpdater\ComposerJson;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Safe\Exceptions\FilesystemException;
+namespace MartinsR\ComposerConstraintUpdater\Tests\Unit;
 
-use function Safe\copy;
-use function Safe\file_get_contents;
-use function Safe\json_decode;
+use PHPUnit\Framework\Attributes\Test;
+use Safe\Exceptions\FilesystemException;
 
 /**
  * @internal
  */
-class ComposerUpdaterTest extends TestCase
+class ComposerUpdaterTest extends UnitTestCase
 {
-    /**
-     * @throws FilesystemException
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-        copy($this->resourcePath('original/originalComposerJson.txt'), $this->resourcePath('composerJson.txt'));
-        copy($this->resourcePath('original/originalComposerLock.txt'), $this->resourcePath('composerLock.txt'));
-    }
-
     /**
      * @throws FilesystemException
      * @throws \Safe\Exceptions\JsonException
@@ -32,16 +18,10 @@ class ComposerUpdaterTest extends TestCase
     #[Test]
     public function buildComposerJsonForUpdate(): void
     {
-        $composerJson = new ComposerJson(
-            $this->resourcePath('composerJson.txt'),
-            $this->resourcePath('composerLock.txt')
-        );
+        $composerJson = $this->composerJson();
 
         $composerJson->replaceVersionsWithAsterisk(['laravel/framework' => '^9.0', 'php' => '^8.1']);
-        $this->assertEquals(
-            json_decode(file_get_contents($this->resourcePath('expected/composerJsonForMajorUpdate.txt'))),
-            json_decode(file_get_contents($this->resourcePath('composerJson.txt'))),
-        );
+        $this->assertComposerJsonContentsEqual($this->resourcePath('expected/composerJsonForMajorUpdate.txt'));
     }
 
     /**
@@ -51,20 +31,9 @@ class ComposerUpdaterTest extends TestCase
     #[Test]
     public function rebuildComposerJsonFileFromLock(): void
     {
-        $composerJson = new ComposerJson(
-            $this->resourcePath('composerJson.txt'),
-            $this->resourcePath('composerLock.txt')
-        );
+        $composerJson = $this->composerJson();
         $composerJson->rebuildFromLock($composerJson->versionPrefixes());
 
-        $this->assertEquals(
-            json_decode(file_get_contents($this->resourcePath('expected/composerJsonFromLock.txt'))),
-            json_decode(file_get_contents($this->resourcePath('composerJson.txt'))),
-        );
-    }
-
-    private function resourcePath(string $resourceName): string
-    {
-        return dirname(__DIR__) . '/resources/' . $resourceName;
+        $this->assertComposerJsonContentsEqual($this->resourcePath('expected/composerJsonFromLock.txt'));
     }
 }

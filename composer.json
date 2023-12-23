@@ -25,16 +25,23 @@
       "MartinsR\\ComposerConstraintUpdater\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "MartinsR\\ComposerConstraintUpdater\\Tests\\Unit\\": "tests/unit"
+    }
+  },
   "scripts": {
-    "fix-safe": [
+    "use-safe": [
       "vendor/bin/rector process src/ --config vendor/thecodingmachine/safe/rector-migrate.php"
     ],
     "php-cs-fixer": [
       "vendor/bin/php-cs-fixer fix --config=phpCsFixerConfig.php-dist"
     ],
     "php-stan": "phpstan analyse",
+    "rector": "vendor/bin/rector process --config rector.php",
     "code-quality": [
-      "@fix-safe",
+      "@use-safe",
+      "@rector",
       "@php-cs-fixer",
       "@php-stan"
     ]

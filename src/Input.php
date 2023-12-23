@@ -29,7 +29,7 @@ class Input
         $constraints = [];
         foreach ($this->input->getOption('constraint') as $option) {
             $constraint = explode(':', $option);
-            if (!isset($constraint[0], $constraint[1])) {
+            if (!isset($constraint[0], $constraint[1]) || count($constraint) !== 2) {
                 throw new Exception('Wrong input constraint, should be as package:version');
             }
             $constraints[$constraint[0]] = $constraint[1];

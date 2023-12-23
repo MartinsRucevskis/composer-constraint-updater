@@ -2,15 +2,11 @@
 
 namespace MartinsR\ComposerConstraintUpdater;
 
-use MartinsR\ComposerConstraintUpdater\ConstraintUpdater;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use function Safe\shell_exec;
 
 class MajorConstraintUpdater implements ConstraintUpdater
 {
-
-    public function executeUpdate(Input $input, OutputInterface $output, ComposerUpdater $composerUpdater)
+    public function executeUpdate(Input $input, OutputInterface $output, ComposerUpdater $composerUpdater): void
     {
         $constraints = $input->inputConstraints();
         $composerJson = $input->composerJson();

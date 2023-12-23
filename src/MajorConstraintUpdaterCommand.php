@@ -5,12 +5,9 @@ namespace MartinsR\ComposerConstraintUpdater;
 use Composer\Command\BaseCommand;
 use Composer\Factory;
 use Exception;
-use Safe\Exceptions\ExecException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use function Safe\shell_exec;
 
 class MajorConstraintUpdaterCommand extends BaseCommand
 {

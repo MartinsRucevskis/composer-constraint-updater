@@ -5,13 +5,10 @@ namespace MartinsR\ComposerConstraintUpdater;
 use Composer\Command\BaseCommand;
 use Composer\Factory;
 use Exception;
-use Safe\Exceptions\ExecException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
-
-use function Safe\shell_exec;
 
 class MinorConstraintUpdaterCommand extends BaseCommand
 {
@@ -59,13 +56,5 @@ class MinorConstraintUpdaterCommand extends BaseCommand
             return 1;
         }
         return 0;
-    }
-
-    /**
-     * @throws ExecException
-     */
-    private function updateComposer(OutputInterface $output): void
-    {
-        $output->write(shell_exec('composer update'), true);
     }
 }
