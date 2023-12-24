@@ -2,8 +2,10 @@
 
 namespace MartinsR\ComposerConstraintUpdater\Tests\Unit;
 
+use Exception;
 use PHPUnit\Framework\Attributes\Test;
 use Safe\Exceptions\FilesystemException;
+use Safe\Exceptions\JsonException;
 
 /**
  * @internal
@@ -12,7 +14,7 @@ class ComposerUpdaterTest extends UnitTestCase
 {
     /**
      * @throws FilesystemException
-     * @throws \Safe\Exceptions\JsonException
+     * @throws JsonException
      * @throws Exception
      */
     #[Test]

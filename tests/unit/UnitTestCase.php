@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Safe\Exceptions\FilesystemException;
 use Safe\Exceptions\JsonException;
 
+use function Safe\copy;
 use function Safe\file_get_contents;
 use function Safe\json_decode;
 
@@ -16,6 +17,9 @@ use function Safe\json_decode;
  */
 class UnitTestCase extends TestCase
 {
+    /**
+     * @throws FilesystemException
+     */
     protected function setUp(): void
     {
         parent::setUp();

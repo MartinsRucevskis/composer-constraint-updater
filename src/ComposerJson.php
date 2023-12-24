@@ -35,8 +35,8 @@ class ComposerJson
         $composerJson = json_decode(file_get_contents($this->composerJsonPath));
         foreach (['require', 'require-dev'] as $requirement) {
             foreach ($composerJson->{$requirement} as $package => $version) {
-                if (str_contains($package, '/')) {
-                    preg_match('#([\^|~|>|=|<]*)#s', $version, $versionPrefix);
+                if (str_contains((string) $package, '/')) {
+                    preg_match('#([\^|~|>|=|<]*)#s', (string) $version, $versionPrefix);
                     $constraints[$package] = $versionPrefix[1];
                 }
             }

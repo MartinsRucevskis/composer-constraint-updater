@@ -5,6 +5,7 @@ namespace MartinsR\ComposerConstraintUpdater\Tests\Unit;
 use MartinsR\ComposerConstraintUpdater\ComposerUpdater;
 use MartinsR\ComposerConstraintUpdater\Input;
 use MartinsR\ComposerConstraintUpdater\MajorConstraintUpdater;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Exception;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -13,17 +14,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class MinorConstraintUpdaterTest extends UnitTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        copy($this->resourcePath('original/originalComposerJson.txt'), $this->resourcePath('composerJson.txt'));
-        copy($this->resourcePath('original/originalComposerLock.txt'), $this->resourcePath('composerLock.txt'));
-    }
-
     /**
      * @throws Exception
+     * @throws \Exception
      */
-    public function testMajorComposerUpdater(): void
+    #[Test]
+    public function MajorComposerUpdater(): void
     {
         $inputMock = $this->createMock(Input::class);
         $inputMock->method('composerJson')->willReturn($this->composerJson());

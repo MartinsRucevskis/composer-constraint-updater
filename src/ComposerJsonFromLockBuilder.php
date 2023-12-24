@@ -31,9 +31,7 @@ class ComposerJsonFromLockBuilder
         foreach ($dependencyPrefixes as $dependencyPrefix) {
             $dependencyNames = $this->dependencyNames($composerJson, $dependencyPrefix);
             $composerLockPackages = $composerLock['packages' . $dependencyPrefix];
-            $usedPackagesFromLock = array_filter($composerLockPackages, function ($package) use ($dependencyNames) {
-                return in_array($package['name'], $dependencyNames);
-            });
+            $usedPackagesFromLock = array_filter($composerLockPackages, fn ($package): bool => in_array($package['name'], $dependencyNames));
             $packageVersions = array_column($usedPackagesFromLock, 'version', 'name');
 
             foreach ($dependencyNames as $dependencyName) {
@@ -51,9 +49,7 @@ class ComposerJsonFromLockBuilder
      */
     private function dependencyNames(array $composerJson, string $dependencyType): array
     {
-        $packages = array_filter(array_keys($composerJson['require' . $dependencyType]), function ($package) {
-            return str_contains($package, '/');
-        });
+        $packages = array_filter(array_keys($composerJson['require' . $dependencyType]), fn ($package): bool => str_contains((string) $package, '/'));
         return array_values($packages);
     }
 }
