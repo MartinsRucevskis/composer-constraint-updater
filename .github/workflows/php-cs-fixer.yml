@@ -1,9 +1,9 @@
 name: Code style
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "**" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "**" ]
 jobs:
   cs-fixer:
     runs-on: ubuntu-latest
