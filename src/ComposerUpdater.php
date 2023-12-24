@@ -13,6 +13,6 @@ class ComposerUpdater
      */
     public function updateComposer(): string
     {
-        return shell_exec('composer updatesa');
+        return shell_exec('composer update');
     }
 }
