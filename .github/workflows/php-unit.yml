@@ -26,14 +26,8 @@ jobs:
       with:
         configuration: phpunit.xml.dist
         php_extensions: gettext xdebug
-        args: --coverage-clover --testdox
-    - name:
-      uses: actions/upload-artifact@v3
-      with:
-        name: coverage.xml
-        path: "coverage.xml"
+        args: --coverage-clover ./coverage.xml --testdox
     - name: Code Coverage Summary
       uses: irongut/CodeCoverageSummary@v1.3.0
       with:
-
         filename: coverage.xml
