@@ -4,12 +4,12 @@ namespace MartinsR\ComposerConstraintUpdater\Tests\Unit;
 
 use MartinsR\ComposerConstraintUpdater\ComposerUpdater;
 use MartinsR\ComposerConstraintUpdater\Input;
-use MartinsR\ComposerConstraintUpdater\MinorConstraintUpdater;
+use MartinsR\ComposerConstraintUpdater\MajorConstraintUpdater;
+use MartinsR\ComposerConstraintUpdater\MajorConstraintUpdaterCommand;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\MockObject\Exception;
-use Safe\Exceptions\ExecException;
-use Safe\Exceptions\FilesystemException;
-use Safe\Exceptions\JsonException;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -18,21 +18,32 @@ use Symfony\Component\Console\Output\OutputInterface;
 class MajorConstraintUpdaterTest extends UnitTestCase
 {
     /**
-     * @throws FilesystemException
      * @throws Exception
-     * @throws ExecException
-     * @throws JsonException
      * @throws \Exception
      */
     #[Test]
-    public function MinorComposerUpdater(): void
+    public function whenMajorComposerUpdateThenRebuildComposerJsonCorrectly(): void
     {
-        $inputMock = $this->createMock(Input::class);
-        $inputMock->method('composerJson')->willReturn($this->composerJson());
+        $input = $this->createMock(Input::class);
+        $input->method('composerJson')->willReturn($this->composerJson());
+
         $composerUpdateMock = $this->createMock(ComposerUpdater::class);
         $composerUpdateMock->expects(self::once())->method('updateComposer');
+
         $output = $this->createMock(OutputInterface::class);
-        (new MinorConstraintUpdater())->executeUpdate($inputMock, $output, $composerUpdateMock);
+
+        (new MajorConstraintUpdater())->executeUpdate($input, $output, $composerUpdateMock);
+
         $this->assertComposerJsonContentsEqual($this->resourcePath('expected/composerJsonFromLock.txt'));
+    }
+
+    #[Test]
+    #[WithoutErrorHandler]
+    public function givenWrongInputWhenLaunchMajorUpdateCommandThenReturn1(): void
+    {
+        $output = $this->createMock(OutputInterface::class);
+        $input = new ArrayInput(['--composer-json' => 'nonExistentPath']);
+
+        $this->assertEquals(1, (new MajorConstraintUpdaterCommand())->run($input, $output));
     }
 }
