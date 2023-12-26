@@ -26,16 +26,16 @@ class ComposerJsonFromLockBuilder
         $composerLock = json_decode(file_get_contents($this->composerLockPath), true);
         $composerJson = json_decode(file_get_contents($this->composerJsonPath), true);
 
-        $dependencyPrefixes = ['', '-dev'];
+        $requirementPrefixes = ['', '-dev'];
 
-        foreach ($dependencyPrefixes as $dependencyPrefix) {
-            $dependencyNames = $this->dependencyNames($composerJson, $dependencyPrefix);
-            $composerLockPackages = $composerLock['packages' . $dependencyPrefix];
-            $usedPackagesFromLock = array_filter($composerLockPackages, fn ($package): bool => in_array($package['name'], $dependencyNames));
-            $packageVersions = array_column($usedPackagesFromLock, 'version', 'name');
+        foreach ($requirementPrefixes as $prefix) {
+            $packageNames = $this->packageNames($composerJson, $prefix);
+            $composerLockPackages = $composerLock['packages' . $prefix];
+            $usedPackagesFromLock = array_filter($composerLockPackages, fn ($package): bool => in_array($package['name'], $packageNames));
+            $usedPackageVersions = array_column($usedPackagesFromLock, 'version', 'name');
 
-            foreach ($dependencyNames as $dependencyName) {
-                $composerJson['require' . $dependencyPrefix][$dependencyName] = $originalVersionPrefixes[$dependencyName] . $packageVersions[$dependencyName];
+            foreach ($packageNames as $dependencyName) {
+                $composerJson['require' . $prefix][$dependencyName] = $originalVersionPrefixes[$dependencyName] . $usedPackageVersions[$dependencyName];
             }
         }
 
@@ -47,7 +47,7 @@ class ComposerJsonFromLockBuilder
      *
      * @return array<int, string>
      */
-    private function dependencyNames(array $composerJson, string $dependencyType): array
+    private function packageNames(array $composerJson, string $dependencyType): array
     {
         $packages = array_filter(array_keys($composerJson['require' . $dependencyType]), fn ($package): bool => str_contains((string) $package, '/'));
         return array_values($packages);

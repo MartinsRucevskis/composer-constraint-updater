@@ -53,9 +53,9 @@ class ComposerJson
      */
     public function replaceVersionsWithAsterisk(array $packageConstraints): void
     {
-        $requirements = ['require', 'require-dev'];
         $composerJson = json_decode(file_get_contents($this->composerJsonPath), true);
-        foreach ($requirements as $requirement) {
+
+        foreach (['require', 'require-dev'] as $requirement) {
             foreach ($composerJson[$requirement] as $package => $version) {
                 if ($this->shouldPackageBeUpdated($package)) {
                     $composerJson[$requirement][$package] = $packageConstraints[$package] ?? '*';

@@ -2,6 +2,7 @@
 
 namespace MartinsR\ComposerConstraintUpdater\Tests\Unit;
 
+use Exception;
 use MartinsR\ComposerConstraintUpdater\Input;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -14,7 +15,7 @@ class InputTest extends UnitTestCase
     /**
      * @param array<mixed> $invalidConstraints
      *
-     * @throws \Exception
+     * @throws Exception
      */
     #[Test]
     #[TestWith([['somePackage=^2']])]
@@ -29,7 +30,7 @@ class InputTest extends UnitTestCase
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     #[Test]
     public function whenManyConstraintsReturnFormattedArray(): void
