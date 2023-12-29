@@ -31,18 +31,14 @@ class ComposerJson
      */
     public function versionPrefixes(): array
     {
-        $constraints = [];
-        $composerJson = json_decode(file_get_contents($this->composerJsonPath));
-        foreach (['require', 'require-dev'] as $requirement) {
-            foreach ($composerJson->{$requirement} as $package => $version) {
-                if (str_contains((string) $package, '/')) {
-                    preg_match('#([\^|~|>|=|<]*)#s', (string) $version, $versionPrefix);
-                    $constraints[$package] = $versionPrefix[1];
-                }
+        foreach ($this->packages() as $package => $version) {
+            if (str_contains((string)$package, '/')) {
+                preg_match('#([\^|~|>|=|<]*)#s', (string)$version, $versionPrefix);
+                $constraints[$package] = $versionPrefix[1];
             }
         }
 
-        return $constraints;
+        return $constraints ?? [];
     }
 
     /**
@@ -54,16 +50,22 @@ class ComposerJson
     public function replaceVersionsWithAsterisk(array $packageConstraints): void
     {
         $composerJson = json_decode(file_get_contents($this->composerJsonPath), true);
+        $packagesToUpdate = array_filter($this->packages(), fn($package) => $this->shouldPackageBeUpdated($package), ARRAY_FILTER_USE_KEY);
 
-        foreach (['require', 'require-dev'] as $requirement) {
-            foreach ($composerJson[$requirement] as $package => $version) {
-                if ($this->shouldPackageBeUpdated($package)) {
-                    $composerJson[$requirement][$package] = $packageConstraints[$package] ?? '*';
-                }
-            }
+        foreach ($packagesToUpdate as $packageToUpdate => $version) {
+            isset($composerJson['require'][$packageToUpdate])
+                ? $composerJson['require'][$packageToUpdate] = $packageConstraints[$packageToUpdate] ?? '*'
+                : $composerJson['require-dev'][$packageToUpdate] = $packageConstraints[$packageToUpdate] ?? '*';
         }
 
         $this->updateContents(json_encode($composerJson, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    }
+
+    private function packages(): array
+    {
+        $composerJson = json_decode(file_get_contents($this->composerJsonPath), true);
+
+        return array_merge($composerJson['require'], $composerJson['require-dev']);
     }
 
     /**

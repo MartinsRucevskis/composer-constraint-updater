@@ -12,6 +12,12 @@ use Throwable;
 
 class MinorConstraintUpdaterCommand extends BaseCommand
 {
+    public function __construct(string $name = null, private ?ComposerUpdater $composerUpdater = null)
+    {
+        $this->composerUpdater = $composerUpdater ?? new ComposerUpdater();
+        parent::__construct($name);
+    }
+
     protected function configure(): void
     {
         $this
@@ -50,7 +56,7 @@ class MinorConstraintUpdaterCommand extends BaseCommand
         try {
             $input = new Input($input);
             $composerUpdater = new ComposerUpdater();
-            (new MinorConstraintUpdater())->executeUpdate($input, $output, $composerUpdater);
+            (new MinorConstraintUpdater())->executeUpdate($input, $output, $this->composerUpdater);
         } catch (Throwable $e) {
             $output->write($e, true);
             return 1;

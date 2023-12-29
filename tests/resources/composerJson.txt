@@ -2,21 +2,18 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": [
-        "laravel",
-        "framework"
-    ],
+    "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
         "php": "^8.1",
-        "composer/metadata-minifier": "~3.0",
-        "guzzlehttp/guzzle": "7.8.0",
-        "laravel/framework": ">=v8.83.27",
+        "composer/metadata-minifier": "~1.0",
+        "guzzlehttp/guzzle": "2",
+        "laravel/framework": ">=3.0",
         "laravel/tinker": "dev-master",
         "martinsr/constraint-updater": "^1.2.1"
     },
     "require-dev": {
-        "mockery/mockery": "1.6.6"
+        "mockery/mockery": "0.1.*"
     },
     "autoload": {
         "psr-4": {

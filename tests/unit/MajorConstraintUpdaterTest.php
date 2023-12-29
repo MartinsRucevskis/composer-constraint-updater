@@ -46,4 +46,18 @@ class MajorConstraintUpdaterTest extends UnitTestCase
 
         $this->assertEquals(1, (new MajorConstraintUpdaterCommand())->run($input, $output));
     }
+
+    #[Test]
+    #[WithoutErrorHandler]
+    public function whenLaunchMajorUpdateCommandThenRebuildComposerJsonCorrectly(): void
+    {
+        $output = $this->createMock(OutputInterface::class);
+        $composerUpdater = $this->getMockBuilder(ComposerUpdater::class)->getMock();
+        $composerUpdater->expects($this->once())->method('updateComposer');
+        $input = new ArrayInput(['--composer-json' => $this->composerJsonPath(), '--composer-lock' => $this->composerLockPath()]);
+
+        (new MajorConstraintUpdaterCommand(composerUpdater: $composerUpdater))->run($input, $output);
+
+        $this->assertComposerJsonContentsEqual($this->resourcePath('/expected/ComposerJsonFromLock.txt'));
+    }
 }

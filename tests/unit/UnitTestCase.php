@@ -24,11 +24,11 @@ class UnitTestCase extends TestCase
     /**
      * @throws FilesystemException
      */
-    protected function setUp(): void
+    protected function tearDown(): void
     {
-        parent::setUp();
         copy($this->resourcePath('original/originalComposerJson.txt'), $this->resourcePath('composerJson.txt'));
         copy($this->resourcePath('original/originalComposerLock.txt'), $this->resourcePath('composerLock.txt'));
+        parent::tearDown();
     }
 
     protected function resourcePath(string $resourceName): string
@@ -53,7 +53,17 @@ class UnitTestCase extends TestCase
      */
     protected function composerJson(): ComposerJson
     {
-        return new ComposerJson($this->resourcePath('composerJson.txt'), $this->resourcePath('composerLock.txt'));
+        return new ComposerJson($this->composerJsonPath(), $this->composerLockPath());
+    }
+
+    protected function composerJsonPath()
+    {
+        return $this->resourcePath('composerJson.txt');
+    }
+
+    protected function composerLockPath()
+    {
+        return $this->resourcePath('composerLock.txt');
     }
 
     /**

@@ -46,4 +46,17 @@ class MinorConstraintUpdaterTest extends UnitTestCase
         $input = new ArrayInput(['--composer-json' => 'nonExistentPath']);
         $this->assertEquals(1, (new MinorConstraintUpdaterCommand())->run($input, $output));
     }
+
+    #[Test]
+    #[WithoutErrorHandler]
+    public function whenLaunchMinotConstraintUpdaterThenRebuildComposerJsonCorrectly(): void
+    {
+        $output = $this->createMock(OutputInterface::class);
+        $composerUpdater = $this->getMockBuilder(ComposerUpdater::class)->getMock();
+        $composerUpdater->expects($this->once())->method('updateComposer');
+
+        $input = new ArrayInput(['--composer-json' => $this->composerJsonPath(), '--composer-lock' => $this->composerLockPath()]);
+        (new MinorConstraintUpdaterCommand(composerUpdater: $composerUpdater))->run($input, $output);
+        $this->assertComposerJsonContentsEqual($this->resourcePath('/expected/ComposerJsonFromLock.txt'));
+    }
 }

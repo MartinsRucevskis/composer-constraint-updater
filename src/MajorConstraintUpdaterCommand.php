@@ -11,6 +11,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class MajorConstraintUpdaterCommand extends BaseCommand
 {
+    public function __construct(string $name = null, private ?ComposerUpdater $composerUpdater = null)
+    {
+        $this->composerUpdater = $this->composerUpdater ?? new ComposerUpdater();
+        parent::__construct($name);
+    }
+
     protected function configure(): void
     {
         $this
@@ -55,8 +61,7 @@ class MajorConstraintUpdaterCommand extends BaseCommand
     {
         try {
             $input = new Input($input);
-            $composerUpdater = new ComposerUpdater();
-            (new MajorConstraintUpdater())->executeUpdate($input, $output, $composerUpdater);
+            (new MajorConstraintUpdater())->executeUpdate($input, $output, $this->composerUpdater);
         } catch (Exception $exception) {
             $output->write($exception, true);
             return 1;
