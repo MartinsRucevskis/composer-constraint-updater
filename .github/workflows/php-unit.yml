@@ -27,8 +27,7 @@ jobs:
         configuration: phpunit.xml.dist
         php_extensions: gettext xdebug
         args: --coverage-cobertura=coverage.xml --testdox
-    - name: Code Coverage Summary
-      uses: irongut/CodeCoverageSummary@v1.3.0
-      with:
-        filename: coverage.xml
-        badge: true
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
