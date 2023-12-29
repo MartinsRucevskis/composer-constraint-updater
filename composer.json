@@ -39,6 +39,7 @@
     ],
     "php-stan": "phpstan analyse",
     "rector": "vendor/bin/rector process --config rector.php",
+    "test": "vendor/bin/phpunit --testdox",
     "code-quality": [
       "@use-safe",
       "@rector",
