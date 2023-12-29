@@ -1,5 +1,8 @@
 # Composer constraint updater
-
+[![Tests](https://github.com/MartinsRucevskis/composer-constraint-updater/actions/workflows/php-unit.yml/badge.svg)](https://github.com/MartinsRucevskis/composer-constraint-updater/actions/workflows/php-unit.yml)
+[![Code style](https://github.com/MartinsRucevskis/composer-constraint-updater/actions/workflows/php-cs-fixer.yml/badge.svg)](https://github.com/MartinsRucevskis/composer-constraint-updater/actions/workflows/php-cs-fixer.yml)
+[![Static analysis](https://github.com/MartinsRucevskis/composer-constraint-updater/actions/workflows/php-stan.yml/badge.svg)](https://github.com/MartinsRucevskis/composer-constraint-updater/actions/workflows/php-stan.yml)
+---
 Helps You automatically resolve composer conflicts
 
 E.g. Need to upgrade your framework to the newest version? Just run
