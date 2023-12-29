@@ -12,7 +12,9 @@ use Throwable;
 
 class MinorConstraintUpdaterCommand extends BaseCommand
 {
-    public function __construct(string $name = null, private ?ComposerUpdater $composerUpdater = null)
+    private ComposerUpdater $composerUpdater;
+
+    public function __construct(string $name = null, ?ComposerUpdater $composerUpdater = null)
     {
         $this->composerUpdater = $composerUpdater ?? new ComposerUpdater();
         parent::__construct($name);
@@ -53,14 +55,15 @@ class MinorConstraintUpdaterCommand extends BaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $exitCode = 0;
         try {
             $input = new Input($input);
-            $composerUpdater = new ComposerUpdater();
             (new MinorConstraintUpdater())->executeUpdate($input, $output, $this->composerUpdater);
         } catch (Throwable $e) {
-            $output->write($e, true);
-            return 1;
+            $output->write($e->getMessage(), true);
+            $exitCode = 1;
+        } finally {
+            return $exitCode;
         }
-        return 0;
     }
 }

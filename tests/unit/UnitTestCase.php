@@ -44,7 +44,7 @@ class UnitTestCase extends TestCase
     {
         $this->assertEquals(
             json_decode(file_get_contents($expectedComposerJsonPath)),
-            json_decode(file_get_contents($this->resourcePath('composerJson.txt')))
+            json_decode(file_get_contents($this->composerJsonPath()))
         );
     }
 
@@ -56,12 +56,12 @@ class UnitTestCase extends TestCase
         return new ComposerJson($this->composerJsonPath(), $this->composerLockPath());
     }
 
-    protected function composerJsonPath()
+    protected function composerJsonPath(): string
     {
         return $this->resourcePath('composerJson.txt');
     }
 
-    protected function composerLockPath()
+    protected function composerLockPath(): string
     {
         return $this->resourcePath('composerLock.txt');
     }
@@ -72,8 +72,8 @@ class UnitTestCase extends TestCase
     protected function inputForConstraint(array $data): ArrayInput
     {
         return new ArrayInput([], new InputDefinition([
-            $this->inputOption('composer-json', $this->resourcePath('composerJson.txt')),
-            $this->inputOption('composer-lock', $this->resourcePath('composerLock.txt')),
+            $this->inputOption('composer-json', $this->composerJsonPath()),
+            $this->inputOption('composer-lock', $this->composerLockPath()),
             $this->inputOption('constraint', $data),
         ]));
     }

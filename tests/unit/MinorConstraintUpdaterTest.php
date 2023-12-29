@@ -9,6 +9,8 @@ use MartinsR\ComposerConstraintUpdater\MinorConstraintUpdaterCommand;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\MockObject\Exception;
+use Safe\Exceptions\FilesystemException;
+use Safe\Exceptions\JsonException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -47,6 +49,12 @@ class MinorConstraintUpdaterTest extends UnitTestCase
         $this->assertEquals(1, (new MinorConstraintUpdaterCommand())->run($input, $output));
     }
 
+    /**
+     * @throws ExceptionInterface
+     * @throws FilesystemException
+     * @throws Exception
+     * @throws JsonException
+     */
     #[Test]
     #[WithoutErrorHandler]
     public function whenLaunchMinotConstraintUpdaterThenRebuildComposerJsonCorrectly(): void
@@ -57,6 +65,6 @@ class MinorConstraintUpdaterTest extends UnitTestCase
 
         $input = new ArrayInput(['--composer-json' => $this->composerJsonPath(), '--composer-lock' => $this->composerLockPath()]);
         (new MinorConstraintUpdaterCommand(composerUpdater: $composerUpdater))->run($input, $output);
-        $this->assertComposerJsonContentsEqual($this->resourcePath('/expected/ComposerJsonFromLock.txt'));
+        $this->assertComposerJsonContentsEqual($this->resourcePath('expected/ComposerJsonFromLock.txt'));
     }
 }

@@ -8,12 +8,15 @@ use Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 class MajorConstraintUpdaterCommand extends BaseCommand
 {
-    public function __construct(string $name = null, private ?ComposerUpdater $composerUpdater = null)
+    private ComposerUpdater $composerUpdater;
+
+    public function __construct(string $name = null, ?ComposerUpdater $composerUpdater = null)
     {
-        $this->composerUpdater = $this->composerUpdater ?? new ComposerUpdater();
+        $this->composerUpdater = $composerUpdater ?? new ComposerUpdater();
         parent::__construct($name);
     }
 
@@ -59,14 +62,15 @@ class MajorConstraintUpdaterCommand extends BaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $exitCode = 0;
         try {
             $input = new Input($input);
             (new MajorConstraintUpdater())->executeUpdate($input, $output, $this->composerUpdater);
-        } catch (Exception $exception) {
-            $output->write($exception, true);
-            return 1;
+        } catch (Throwable $e) {
+            $output->write($e->getMessage(), true);
+            $exitCode = 1;
+        } finally {
+            return $exitCode;
         }
-
-        return 0;
     }
 }
