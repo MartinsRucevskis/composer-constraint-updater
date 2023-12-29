@@ -57,7 +57,7 @@ composer minor-update
 ```
 Will run composer update command, and rebuild composer.json file to have up-to-date dependencies with the lock file
 
-# How to Contribute
+# How to contribute
 1. Select a GitHub issue or create one
 2. Pull the repository locally
 3. For development use PHP 8.1
