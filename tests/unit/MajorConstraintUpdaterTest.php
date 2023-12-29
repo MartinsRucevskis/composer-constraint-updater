@@ -67,6 +67,6 @@ class MajorConstraintUpdaterTest extends UnitTestCase
 
         (new MajorConstraintUpdaterCommand(composerUpdater: $composerUpdater))->run($input, $output);
 
-        $this->assertComposerJsonContentsEqual($this->resourcePath('expected/ComposerJsonFromLock.txt'));
+        $this->assertComposerJsonContentsEqual($this->resourcePath('expected/composerJsonFromLock.txt'));
     }
 }

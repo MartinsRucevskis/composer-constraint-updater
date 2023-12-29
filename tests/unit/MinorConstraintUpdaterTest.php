@@ -65,6 +65,6 @@ class MinorConstraintUpdaterTest extends UnitTestCase
 
         $input = new ArrayInput(['--composer-json' => $this->composerJsonPath(), '--composer-lock' => $this->composerLockPath()]);
         (new MinorConstraintUpdaterCommand(composerUpdater: $composerUpdater))->run($input, $output);
-        $this->assertComposerJsonContentsEqual($this->resourcePath('expected/ComposerJsonFromLock.txt'));
+        $this->assertComposerJsonContentsEqual($this->resourcePath('expected/composerJsonFromLock.txt'));
     }
 }
