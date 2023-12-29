@@ -2,6 +2,8 @@
 [![Tests](https://github.com/MartinsRucevskis/composer-constraint-updater/actions/workflows/php-unit.yml/badge.svg)](https://github.com/MartinsRucevskis/composer-constraint-updater/actions/workflows/php-unit.yml)
 [![Code style](https://github.com/MartinsRucevskis/composer-constraint-updater/actions/workflows/php-cs-fixer.yml/badge.svg)](https://github.com/MartinsRucevskis/composer-constraint-updater/actions/workflows/php-cs-fixer.yml)
 [![Static analysis](https://github.com/MartinsRucevskis/composer-constraint-updater/actions/workflows/php-stan.yml/badge.svg)](https://github.com/MartinsRucevskis/composer-constraint-updater/actions/workflows/php-stan.yml)
+[![codecov](https://codecov.io/gh/MartinsRucevskis/composer-constraint-updater/graph/badge.svg?token=EHIZQNJ3CC)](https://codecov.io/gh/MartinsRucevskis/composer-constraint-updater)
+
 ---
 Helps You automatically resolve composer conflicts
 
