@@ -4,7 +4,7 @@ Helps You automatically resolve composer conflicts
 
 E.g. Need to upgrade your framework to the newest version? Just run
 ```bash
-composer major-update--constraint=package/package:^10.0
+composer major-update --constraint=package/package:^10.0
 ```
 Want to upgrade minor versions and also update your compose.json file to the up-to-date versions? Run
 ```
