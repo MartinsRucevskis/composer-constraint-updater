@@ -57,7 +57,7 @@ class MinorConstraintUpdaterTest extends UnitTestCase
      */
     #[Test]
     #[WithoutErrorHandler]
-    public function whenLaunchMinotConstraintUpdaterThenRebuildComposerJsonCorrectly(): void
+    public function whenLaunchMinorConstraintUpdaterCommandThenRebuildComposerJsonCorrectly(): void
     {
         $output = $this->createMock(OutputInterface::class);
         $composerUpdater = $this->getMockBuilder(ComposerUpdater::class)->getMock();

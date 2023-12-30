@@ -33,7 +33,7 @@ class InputTest extends UnitTestCase
      * @throws Exception
      */
     #[Test]
-    public function whenManyConstraintsReturnFormattedArray(): void
+    public function whenManyConstraintsThenReturnFormattedArray(): void
     {
         $input = $this->inputForConstraint([
             'testPackage:^9.0.0.22',
