@@ -6,14 +6,14 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
-        "composer/metadata-minifier": "~1.0",
-        "guzzlehttp/guzzle": "2",
-        "laravel/framework": ">=3.0",
-        "laravel/tinker": "dev-master",
+        "composer/metadata-minifier": "*",
+        "guzzlehttp/guzzle": "*",
+        "laravel/framework": "^9.0",
+        "laravel/tinker": "*",
         "martinsr/constraint-updater": "^1.2.1"
     },
     "require-dev": {
-        "mockery/mockery": "0.1.*"
+        "mockery/mockery": "*"
     },
     "autoload": {
         "psr-4": {
