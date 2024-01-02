@@ -9,18 +9,43 @@
   ],
   "require": {
     "php": "^8.1",
-    "composer-plugin-api": "^2.3"
+    "composer-plugin-api": "^2.3",
+    "thecodingmachine/safe": "^2.5"
   },
   "require-dev": {
-    "composer/composer": "^2.0",
+    "composer/composer": "^2.6.6",
     "phpunit/phpunit": "10.4.2",
-    "phpstan/phpstan": "^1.10",
-    "friendsofphp/php-cs-fixer": "^3.38"
+    "phpstan/phpstan": "^1.10.50",
+    "friendsofphp/php-cs-fixer": "^3.41.1",
+    "thecodingmachine/phpstan-safe-rule": "^1.2",
+    "rector/rector": "^0.18.13"
   },
   "autoload": {
     "psr-4": {
       "MartinsR\\ComposerConstraintUpdater\\": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "MartinsR\\ComposerConstraintUpdater\\Tests\\Unit\\": "tests/unit"
+    }
+  },
+  "scripts": {
+    "use-safe": [
+      "vendor/bin/rector process src/ --config vendor/thecodingmachine/safe/rector-migrate.php"
+    ],
+    "php-cs-fixer": [
+      "vendor/bin/php-cs-fixer fix --config=phpCsFixerConfig.php-dist"
+    ],
+    "php-stan": "phpstan analyse",
+    "rector": "vendor/bin/rector process --config rector.php",
+    "test": "vendor/bin/phpunit --testdox",
+    "code-quality": [
+      "@use-safe",
+      "@rector",
+      "@php-cs-fixer",
+      "@php-stan"
+    ]
   },
   "extra": {
     "class": "MartinsR\\ComposerConstraintUpdater\\ComposerPlugin"

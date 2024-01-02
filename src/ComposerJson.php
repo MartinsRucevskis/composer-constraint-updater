@@ -2,67 +2,100 @@
 
 namespace MartinsR\ComposerConstraintUpdater;
 
+use Exception;
+use Safe\Exceptions\FilesystemException;
+use Safe\Exceptions\JsonException;
+use Safe\Exceptions\PcreException;
+
+use function Safe\file_get_contents;
+use function Safe\file_put_contents;
+use function Safe\json_decode;
+use function Safe\json_encode;
+use function Safe\preg_match;
+
 class ComposerJson
 {
-    use FileOpener;
-    private string $composerContents;
     /**
-     * @var array<string, array<string, string>>
+     * @throws Exception
      */
-    private array $versionPrefixes;
-
-    /**
-     * @throws \Exception
-     */
-    public function __construct(private readonly string $composerPath, private readonly string $composerLockPath)
+    public function __construct(private readonly string $composerJsonPath, private readonly string $composerLockPath)
     {
-        $this->composerContents = $this->fileContents($this->composerPath);
-        $this->versionPrefixes = $this->versionPrefixes();
     }
 
     /**
      * @return array<mixed>
+     *
+     * @throws JsonException
+     * @throws PcreException
+     * @throws FilesystemException
      */
-    private function versionPrefixes(): array
+    public function versionPrefixes(): array
     {
-        $constraints = [];
-        foreach (['require', 'require-dev'] as $requirement) {
-            preg_match('/"' . preg_quote($requirement) . '"\s*:\s*\{([\s|\S]+?)\}/m', $this->composerContents, $matches);
-            if (isset($matches[1])) {
-                preg_match_all('/\"(.+?)\"\s*:\s*"([<>~^=]*).*"/m', $matches[1], $matches);
-                for ($i = 0; $i < count($matches[1]); $i++) {
-                    $constraints[$requirement][$matches[1][$i]] = $matches[2][$i] ?? '^';
-                }
+        foreach ($this->packages() as $package => $version) {
+            if (str_contains((string) $package, '/')) {
+                preg_match('#([\^|~|>|=|<]*)#s', (string) $version, $versionPrefix);
+                $constraints[$package] = $versionPrefix[1];
             }
         }
 
-        return $constraints;
+        return $constraints ?? [];
     }
 
     /**
      * @param array<string, string> $packageConstraints
+     *
+     * @throws JsonException
+     * @throws FilesystemException
      */
-    public function replaceVersions(array $packageConstraints): string
+    public function replaceVersionsWithAsterisk(array $packageConstraints): void
     {
-        $requirements = ['require', 'require-dev'];
-        foreach ($requirements as $requirement) {
-            preg_match('/"' . preg_quote($requirement) . '"\s*:\s*\{([\s|\S]+?)\}/m', $this->composerContents, $matches);
-            $packages = preg_replace('/:\s*"(?!.*dev)(.*)+?"/m', ': "*"', $matches[1]);
-            foreach ($packageConstraints as $constraint => $version) {
-                $packages = preg_replace(
-                    '@"' . preg_quote($constraint) . '"\s*:\s*"\*"@m',
-                    '"' . $constraint . '": "' . $version . '"',
-                    $packages
-                );
-            }
-            $this->composerContents = preg_replace('/"' . preg_quote($requirement) . '"\s*:\s*\{([\s|\S]+?)\}/m', '"' . $requirement . '": {' . $packages . '}', $this->composerContents);
+        $composerJson = json_decode(file_get_contents($this->composerJsonPath), true);
+        $packagesToUpdate = array_filter($this->packages(), fn ($package) => $this->shouldPackageBeUpdated($package), ARRAY_FILTER_USE_KEY);
+
+        foreach ($packagesToUpdate as $packageToUpdate => $version) {
+            isset($composerJson['require'][$packageToUpdate])
+                ? $composerJson['require'][$packageToUpdate] = $packageConstraints[$packageToUpdate] ?? '*'
+                : $composerJson['require-dev'][$packageToUpdate] = $packageConstraints[$packageToUpdate] ?? '*';
         }
 
-        return $this->composerContents;
+        $this->updateContents(json_encode($composerJson, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 
-    public function rebuildFromLock(): string
+    /**
+     * @param array<string, array<string, string>> $versionPrefixes
+     *
+     * @throws FilesystemException
+     * @throws Exception
+     */
+    public function rebuildFromLock(array $versionPrefixes = []): void
     {
-        return (new ComposerJsonFromLockBuilder($this->composerPath, $this->composerLockPath))->versionsFromLock($this->versionPrefixes);
+        $composerJsonBuilder = new ComposerJsonFromLockBuilder($this->composerJsonPath, $this->composerLockPath);
+        $this->updateContents($composerJsonBuilder->versionsFromLock($versionPrefixes));
+    }
+
+    /**
+     * @throws FilesystemException
+     */
+    public function updateContents(string $fileContents): void
+    {
+        file_put_contents($this->composerJsonPath, $fileContents);
+    }
+
+    /**
+     * @return array<string, string>
+     *
+     * @throws FilesystemException
+     * @throws JsonException
+     */
+    private function packages(): array
+    {
+        $composerJson = json_decode(file_get_contents($this->composerJsonPath), true);
+
+        return array_merge($composerJson['require'], $composerJson['require-dev']);
+    }
+
+    private function shouldPackageBeUpdated(string $packageName): bool
+    {
+        return str_contains($packageName, '/') && $packageName !== 'martinsr/constraint-updater';
     }
 }
