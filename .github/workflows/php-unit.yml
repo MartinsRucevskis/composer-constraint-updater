@@ -29,5 +29,7 @@ jobs:
         args: --coverage-cobertura=coverage.xml --testdox
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
+      ignore:
+        - "src/ComposerUpdater.php"
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
