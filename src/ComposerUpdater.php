@@ -8,11 +8,14 @@ use function Safe\shell_exec;
 
 class ComposerUpdater
 {
-    /**
-     * @throws ExecException
-     */
     public function updateComposer(): string
     {
-        return shell_exec('composer update');
+        try {
+            $output = shell_exec('composer update');
+        } catch (ExecException $e) {
+            $output = 'Shell exec didn\'t finish correctly.';
+        }
+
+        return $output;
     }
 }

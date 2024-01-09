@@ -30,7 +30,7 @@ class ComposerJsonFromLockBuilder
 
         foreach ($requirementPrefixes as $prefix) {
             $packageNames = $this->packageNames($composerJson, $prefix);
-            $composerLockPackages = $composerLock['packages' . $prefix];
+            $composerLockPackages = array_merge($composerLock['packages'], $composerLock['packages-dev']);
             $usedPackagesFromLock = array_filter($composerLockPackages, fn ($package): bool => in_array($package['name'], $packageNames));
             $usedPackageVersions = array_column($usedPackagesFromLock, 'version', 'name');
 
